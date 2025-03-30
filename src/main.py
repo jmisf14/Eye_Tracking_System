@@ -1,6 +1,7 @@
 import cv2
 import mediapipe as mp
 import numpy as np
+import pyautogui  
 
 def main():
     # Initialize MediaPipe Face Mesh
@@ -47,6 +48,9 @@ def main():
                 # Visualize the gaze point on the video feed
                 cv2.circle(frame, (gaze_x, gaze_y), 10, (0, 255, 0), -1)
                 print(f"Gaze Coordinates: ({gaze_x}, {gaze_y})")  # Log gaze coordinates
+
+                # Display a red dot on the screen at the gaze coordinates
+                pyautogui.moveTo(gaze_x, gaze_y)
 
         # Display the frame
         cv2.imshow('Eye Tracking', frame)
