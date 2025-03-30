@@ -1,7 +1,7 @@
 import cv2
 import mediapipe as mp
 import numpy as np
-import pyautogui  
+import pyautogui
 
 def main():
     # Initialize MediaPipe Face Mesh
@@ -12,7 +12,7 @@ def main():
     # Start video capture
     cap = cv2.VideoCapture(0)
 
-    screen_width, screen_height = 1920, 1080  # Screen dimensions for gaze normalization
+    screen_width, screen_height = pyautogui.size()  # Get screen dimensions dynamically
 
     while True:
         ret, frame = cap.read()
@@ -45,20 +45,23 @@ def main():
                 gaze_x = int(screen_width * (left_eye_center[0] + right_eye_center[0]) / 2)
                 gaze_y = int(screen_height * (left_eye_center[1] + right_eye_center[1]) / 2)
 
-                # Visualize the gaze point on the video feed
-                cv2.circle(frame, (gaze_x, gaze_y), 10, (0, 255, 0), -1)
+                # Convert gaze coordinates to the video frame's resolution
+                frame_height, frame_width, _ = frame.shape
+                dot_x = int(frame_width * (left_eye_center[0] + right_eye_center[0]) / 2)
+                dot_y = int(frame_height * (left_eye_center[1] + right_eye_center[1]) / 2)
+
+                # Draw the red dot on the video feed
+                cv2.circle(frame, (dot_x, dot_y), 10, (0, 0, 255), -1)
                 print(f"Gaze Coordinates: ({gaze_x}, {gaze_y})")  # Log gaze coordinates
 
-                # Display a red dot on the screen at the gaze coordinates
-                pyautogui.moveTo(gaze_x, gaze_y)
-
-        # Display the frame
-        cv2.imshow('Eye Tracking', frame)
+        # Display the frame with the red dot
+        cv2.imshow('Eye Tracking with Gaze Dot', frame)
 
         # Exit the loop if 'q' is pressed
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
+    # Release resources
     cap.release()
     cv2.destroyAllWindows()
 
